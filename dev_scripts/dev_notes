@@ -1,0 +1,11 @@
+New Features
+1. Run model multiple time, changing parameters each time
+2. Save all Cow objects to a database file
+
+Updates and Fixes
+1. Update datetime import and use (ChatGPT)
+2. Error handling (ChatGPT)
+3. Add check to make sure all model_functions are methods of Cow
+4. Swap print statements for logging (ChatGPT)
+5. Currently concating pandas datframes inside of a loop (ChatGPT)
+        More efficeint to save as a list of lists then turn into a dataframe

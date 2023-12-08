@@ -1,14 +1,18 @@
 # Define Cow class
+import pandas as pd
+from datetime import datetime
+import types
 
 class Cow:
     total_cows = 0
 
-    def __init__(self, name, iStateVars, parameters, outputs):
+    def __init__(self, name, iStateVars, parameters, outputs, model_functions):
         self.name = name
         self.iStateVars = iStateVars
         self.parameters = parameters
         self.results_dataframe = None
         self.outputs = outputs
+        self.model_functions = [types.MethodType(func, self) for func in model_functions]
         Cow.total_cows += 1
 
     def __repr__(self):
@@ -19,116 +23,6 @@ class Cow:
         moo_sound = 'M' + 'o' * num_o
         print(f"{self.name}: {moo_sound}")
 
-    def laccurve5_dijkstra(self, stateVars, t, prev_var_return=None):
-            # prev_var_return is required if you want to have a variable with an initial value that then gets updated each iteration
-            # The variable must also be included in the outputs
-            # TODO ask John about this issue, how common is it to have variables like this
-
-        import numpy as np
-        import math
-
-        # Assign Parameter Values #
-        a = self.parameters['a']
-        b = self.parameters['b']
-        b0 = self.parameters['b0']
-        c = self.parameters['c']
-        L = self.parameters['L']
-        KDMIMILK = self.parameters['KDMIMILK']
-        KDMImbw = self.parameters['KDMImbw']
-        Hcfeed = self.parameters['Hcfeed']
-        Hcmilk = self.parameters['Hcmilk']
-        KL = self.parameters['KL']
-        expL = self.parameters['expL']
-        pregdate = self.parameters['pregdate']
-        kf1 = self.parameters['kf1']
-        kf2 = self.parameters['kf2']
-        milk_value = self.parameters['milk_value']
-
-        # Paramaters that require an initial value #
-        if t == 0:
-             E = self.parameters['E']
-        else:
-            E = prev_var_return[5]
-
-
-        # Variables w/ Differential Equation #
-        BW = stateVars[0]
-        ER = stateVars[1]
-        milkcumul = stateVars[2]
-        DMIcumul = stateVars[3]
-        IOFCcumul = stateVars[4]
-
-        # Model Equations # 
-        feed_price = (101 * Hcfeed + 2.7) / 1000
-
-        BFat = ER/9.0       
-        # Body fat
-    
-        Lmod = 1.0-(1.0-L)/(1.0+(KL/BFat)**expL)         
-            # 1 - (1-L) = L?
-            # Modifying value of L? Why the adjustment?
-
-        dijkstra_milk = a * np.exp(b * (1 - np.exp(-b0 * t)) / b0 - c * t)
-        # John has modified S to give 4% FCM yield per alveolus 
-
-        NEmilk = E**Lmod*dijkstra_milk                         
-            # Net energy milk
-            # On slide 28 this is equation for FCM yield but L is modified here
-            # Is L modified to give a NEmilk as well as a milk yield (milk)
-
-        milk = NEmilk/Hcmilk                
-            # Milk production
-
-        DMINRC = (KDMIMILK * milk + KDMImbw * BW**0.75)*(1.0-math.exp(-0.192*(t/7+3.67)))   
-            # Slide 28
-            # NRC DMI equation
-
-        fdbk = (kf1*t/7+kf2)*(ER-iER)/iER               
-        # Ellis 2006
-            # Feedback on DMI
-
-        DMI = DMINRC - fdbk                             
-            # Dry matter intake     
-
-        NEI = Hcfeed*DMI                                
-            # Net energy intake
-
-        NEmaint = 0.096*BW**0.75                        
-            # Net energy maintenance
-
-        if t < pregdate + 190:                          
-            NEgest = 0
-        else:
-            NEgest = (0.00318*(t-pregdate-190)-0.0352)/0.218
-            # Net energy gestation
-
-        NEreqt = NEmaint + dijkstra_milk + NEgest + 5.12*2.0          
-            # NE requirement, from NRC
-
-        E = NEI/NEreqt            
-            # Energy balance
-
-        # Differential Equations # 
-        dERdt = NEI - NEmaint - NEmilk - NEgest
-        # Energy requirement (NE)
-    
-        if dERdt < 0:
-            dBWdt = dERdt/4.92  # 4.92 Mcal/kg in NRC(1988)
-        else:
-            dBWdt = dERdt/5.12  # 5.12 Mcal/kg for gain
-            # Bodyweight gain
-
-        IOFC = (milk * milk_value) - (DMI * feed_price)
-
-        # Format data for return # 
-        differential_return = [dBWdt, dERdt, milk, DMI, IOFC]
-        local_variables = locals()
-        # Store local variables 
-        variable_returns = [local_variables.get(variable_name) for variable_name in self.outputs]
-        # Create list of variables to return
-
-        return differential_return, variable_returns
-
     def runModel(self, Start, runTime, integInt, communInt,
                  model_function,
                  prev_output=None,
@@ -136,10 +30,6 @@ class Cow:
                  filepath='./',
                  filename='generic',
                  fileextension='.csv'):
-        
-        import pandas as pd
-        from datetime import datetime
-
         ### Setup Integration and Communication Loop ###
         lastIntervalNo=runTime/integInt 
         intervalNoForComm=communInt/integInt
@@ -236,16 +126,34 @@ class Cow:
         # return the dataframe to be used later
         return output_dataframe
 
-    def execute_runModel(self):
+    def execute_runModel(self, 
+                         Start, 
+                         runTime,
+                         integInt,
+                         communInt,
+                         model_index,
+                         prev_output=None,
+                         output_file=False,
+                         filepath='./',
+                         filename='generic',
+                         fileextension='.csv'
+                         ):
+        if 0 <= model_index < len(self.model_functions):
+            selected_model = self.model_functions[model_index]
+        else:
+            print(f"Invalid model index. Please choose an index between 0 and {len(self.model_functions) - 1}")
+
         # Call the runModel method
-        self.results_dataframe = self.runModel(0,
-                                               307,
-                                               0.001,
-                                               7,
-                                            #    outputs_list=self.outputs,
-                                            #    parameters=self.parameters,
-                                            #    initital_stateVars=self.iStateVars,
-                                               model_function=self.laccurve5_dijkstra
+        self.results_dataframe = self.runModel(Start,
+                                               runTime,
+                                               integInt,
+                                               communInt,
+                                               selected_model,
+                                               prev_output,
+                                               output_file,
+                                               filepath,
+                                               filename,
+                                               fileextension
                                                )
 
     def get_cow_parameters(self):
