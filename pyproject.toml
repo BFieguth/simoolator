@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "simoolator"
+version = "0.1.0"
+description = "Create and manage Cow objects as a way of running models on many individual animals at once"
+authors = ["Braeden Fieguth"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
