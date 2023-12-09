@@ -2,9 +2,10 @@
 from simoolator.cow import Cow
 
 class Herd:
-    def __init__(self, outputs):
+    def __init__(self, outputs, model_functions):
         self.list_of_cows = []
         self.outputs = outputs 
+        self.model_functions = model_functions
 
     def add_cow(self, cow):
         self.list_of_cows.append(cow)        
@@ -47,11 +48,12 @@ class Herd:
     def import_dataframe(self, df):
         for index, row in df.iterrows():
             cow_variable = row['cow_ID']
-            # print(cow_variable)
-            cow_variable = Cow(name=row['name'], 
+  
+            cow_variable = Cow(name=row['cow_ID'], 
                                iStateVars=row['iStateVars'],
                                parameters=row['parameters'],
-                               outputs=self.outputs)
+                               outputs=self.outputs,
+                               model_functions=self.model_functions)
             self.add_cow(cow_variable)
         print("All cows have been added")
         return

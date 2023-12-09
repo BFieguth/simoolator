@@ -1,0 +1,3 @@
+cow_import_data
+- the a, b, b0 and c parameters come from fitting the Dijkstra model up to 120 DIM
+- Values are from Linaya's Masters dataset, pulled from params_default_iterated_DIM_params.rds
