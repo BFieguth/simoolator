@@ -1,5 +1,5 @@
 New Features
-1. Run model multiple time, changing parameters each time
+1. Run model, change parameter, then continue simulation
 2. Save all Cow objects to a database file
 
 Updates and Fixes
@@ -9,3 +9,6 @@ Updates and Fixes
 4. Swap print statements for logging (ChatGPT)
 5. Currently concating pandas datframes inside of a loop (ChatGPT)
         More efficeint to save as a list of lists then turn into a dataframe
+
+TODO
+1. Add cow_wrangler to package functions

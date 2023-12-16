@@ -10,7 +10,7 @@ class Cow:
         self.name = name
         self.iStateVars = iStateVars
         self.parameters = parameters
-        self.results_dataframe = None
+        self.results = []
         self.outputs = outputs
         self.model_functions = [types.MethodType(func, self) for func in model_functions]
         Cow.total_cows += 1
@@ -25,6 +25,7 @@ class Cow:
 
     def runModel(self, Start, runTime, integInt, communInt,
                  model_function,
+                 scenario_param=None,
                  prev_output=None,
                  output_file=False,
                  filepath='./',
@@ -49,7 +50,7 @@ class Cow:
             t=0.0 # start time for simulation
             # Run model at time=0, uses initial state variables that user input
             differential_return, variable_returns = model_function(stateVars=self.iStateVars,
-                                                                #    prev_var_return=variable_returns,
+                                                                   scenario_param=scenario_param,
                                                                    t=t)                                                             
             model_results.append(variable_returns)        
                 # dynamic() now returns a list of variables that can be appended into model_results
@@ -61,6 +62,8 @@ class Cow:
             # check that prev_output has been included
             if not isinstance(prev_output, pd.DataFrame):
                 raise TypeError("The variable prev_output must be a dataframe if Start == 1")
+            # Initialize variable_returns if Start == 1
+            variable_returns = None
 
         # 4th-order Runge Kutta algorithm to iterate through dynamic() between t = 0 and tStop
         stateVars = self.iStateVars.copy()
@@ -70,6 +73,7 @@ class Cow:
                 # eval model fluxes and store diff eqn results in slopes[part][statevar] for 
                 # each part of Runge-Kutta by calling dynamic() here:
                 differential_return, variable_returns = model_function(stateVars=stateVars,
+                                                                       scenario_param=scenario_param,
                                                                        prev_var_return=variable_returns,
                                                                        t=t)
                 slopes.append(differential_return)  # Add list of differentials
@@ -132,6 +136,7 @@ class Cow:
                          integInt,
                          communInt,
                          model_index,
+                         scenario_param=None,
                          prev_output=None,
                          output_file=False,
                          filepath='./',
@@ -144,17 +149,21 @@ class Cow:
             print(f"Invalid model index. Please choose an index between 0 and {len(self.model_functions) - 1}")
 
         # Call the runModel method
-        self.results_dataframe = self.runModel(Start,
-                                               runTime,
-                                               integInt,
-                                               communInt,
-                                               selected_model,
-                                               prev_output,
-                                               output_file,
-                                               filepath,
-                                               filename,
-                                               fileextension
-                                               )
+        results_dataframe = self.runModel(Start,
+                                        runTime,
+                                        integInt,
+                                        communInt,
+                                        selected_model,
+                                        scenario_param,
+                                        prev_output,
+                                        output_file,
+                                        filepath,
+                                        filename,
+                                        fileextension
+                                        )
+        print(results_dataframe)
+        self.results.append(results_dataframe)
+        return
 
     def get_cow_parameters(self):
         cow_data = [self.name, self.parameters, self.iStateVars, self.results_dataframe]

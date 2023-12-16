@@ -2,10 +2,11 @@
 from simoolator.cow import Cow
 
 class Herd:
-    def __init__(self, outputs, model_functions):
+    def __init__(self, outputs, model_functions, scenario_dict):
         self.list_of_cows = []
         self.outputs = outputs 
         self.model_functions = model_functions
+        self.scenario_dict = scenario_dict
 
     def add_cow(self, cow):
         self.list_of_cows.append(cow)        
@@ -22,16 +23,15 @@ class Herd:
                        integInt,
                        communInt,
                        model_index,
-                       prev_output,
-                       output_file,
-                       filepath,
-                       filename,
-                       fileextension
+                       prev_output=None,
+                        output_file=False,
+                        filepath='./',
+                        filename='generic',
+                        fileextension='.csv'
                     ):
         print("Begin executing models...")
         for cow in self.list_of_cows:
-            cow.execute_runModel(
-                                Start,
+            cow.execute_runModel(Start,
                                 runTime,
                                 integInt,
                                 communInt,
@@ -43,6 +43,38 @@ class Herd:
                                 fileextension
             )
         print("Finished")
+        return
+    
+    def run_all_scenarios(self,
+                          Start,
+                        runTime,
+                        integInt,
+                        communInt,
+                        model_index,
+                        prev_output=None,
+                        output_file=False,
+                        filepath='./',
+                        filename='generic',
+                        fileextension='.csv'):
+        for cow in self.list_of_cows:
+            for key, value in self.scenario_dict.items():
+            # Eventually create a Scenario object with a method to pass variables this way
+                scenario_param_name = key
+                scenario_param_value = value
+
+                cow.execute_runModel(Start, 
+                                    runTime,
+                                    integInt,
+                                    communInt,
+                                    model_index,
+                                    scenario_param=scenario_param_value,
+                                    prev_output=None,
+                                    output_file=False,
+                                    filepath='./',
+                                    filename='generic',
+                                    fileextension='.csv')
+                print(f"Finished cow {cow.name} with {scenario_param_name}={scenario_param_value}")
+        print("Finished all cows")
         return
     
     def import_dataframe(self, df):

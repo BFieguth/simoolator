@@ -1,4 +1,4 @@
-﻿cow_ID,iStateVar_iBW,iStateVar_iER,iStateVar_milkcumul,iStateVar_DMIcumul,iStateVar_IOFCcumul,param_a,param_b,param_b0,param_c,param_E,param_L,param_KDMIMILK,param_DMImbw,param_Hcfeed,param_Hcmilk,param_KL,param_expL,param_pregdate,param_kf1,param_kf2,param_milk_value
+﻿cow_ID,iStateVar_iBW,iStateVar_iER,iStateVar_milkcumul,iStateVar_DMIcumul,iStateVar_IOFCcumul,param_a,param_b,param_b0,param_c,param_E,param_L,param_KDMIMILK,param_KDMImbw,param_Hcfeed,param_Hcmilk,param_KL,param_expL,param_pregdate,param_kf1,param_kf2,param_milk_value
 10_1,650,1053,0,0,0,14.152526,0.049180107,0.04786084,2.76E-03,0.5,0.567,0.372,0.0968,1.6,0.749,20,20,280,0,0,0.9
 442_7,710,1150.2,0,0,0,28.60441,0.025187342,3.04E-02,4.90E-03,0.5,0.567,0.372,0.0968,1.6,0.749,20,20,280,0,0,0.9
 7_1,688,1114.56,0,0,0,15.046157,0.044436443,3.71E-02,3.87E-03,0.5,0.567,0.372,0.0968,1.6,0.749,20,20,280,0,0,0.9
