@@ -1,0 +1,49 @@
+1. Document exisitng code
+2. Create timeline for adding listed features
+3. Create use case examples:
+    - Running NASEM for a herd (via nasem_dairy)
+    - Running integrated model on many different animals (via modelling_tools)
+    - Running machine learning (via ml_tools)
+
+===============
+Features to Add
+===============
+
+- Parallel computing
+    * Add native support for multithreading on CPU
+    * Determine if GPU support is possible
+
+- Data validation across herd
+    * A method to check if the data stored in each Cow instance is consistent across a herd
+
+- Input mapping visualization
+    * Pass the name of a model, print the data structure to highlight which variables are being used.
+
+- Modify input mapping
+    * Add methods for altering the input mapping of a function. Make names don't have to match to work
+
+- Export data from Cow/Herd to file
+
+- Aggregate results across a herd
+    * Perform some basic analysis on values
+
+- Error handling when executing models
+    * Handle errors gracefully. If one fails the rest should run. Return and store data about errors at the end
+
+- Metadata
+    * Store all information needed to reproduce results
+    * Store metadata on the herd
+    * Keep a log of each model execution, include error messages
+    * Values related to performance / execution time
+
+- Create Herd from files
+    * CSV, JSON
+
+- Create Herd Session log
+    * Create new log every time Herd is loaded from file
+    * Store details of every method called on the Herd
+
+- Add option to group Cows within a herd
+    * Can use groups to execute on a subset of the Herd
+
+- Add option to select which Cows to execute model on

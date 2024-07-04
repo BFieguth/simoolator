@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "simoolator"
+version = "0.1.0"
+description = "A framework for organizing data and running models on individual animals"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = 'simoolator', from = 'src'}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

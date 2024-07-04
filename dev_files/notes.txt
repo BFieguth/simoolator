@@ -1,0 +1,13 @@
+Implemented:
+1. Setup system for mapping inputs to functions
+2. Handle errors in model execution
+3. Setup metadata for model execution
+4. Access results from Cow via Herd
+5. Store results from multiple model runs
+7. View input data structure in Cow
+
+TODO:
+6. Create a log of all methods called on a herd from load to save, dump this to a text file when Herd is saved
+8. Add/remove/manipulate data in a Cow
+9. Method to verify self.input is the same for all cows
+
