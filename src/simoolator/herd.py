@@ -1,11 +1,14 @@
-import json
-import dill as pickle
 from datetime import datetime
+import json
+from typing import Any, Callable, Dict
+
+import dill as pickle
+
 from simoolator.cow import Cow
 from .model_registry import ModelRegistry
 
 class Herd:
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self.name = name
         self.cows_in_herd = []
         self.model_registry = ModelRegistry()
@@ -20,16 +23,16 @@ class Herd:
         }
         return state
 
-    def __setstate__(self, state):
+    def __setstate__(self, state: Dict[str, Any]):
         self.name = state['name']
         self.cows_in_herd = state['cows_in_herd']
         self.model_registry = state['model_registry']
         self.metadata = state['metadata']
 
-    def add_cow(self, cow):
+    def add_cow(self, cow: Cow) -> None:
         self.cows_in_herd.append(cow)
 
-    def load_cows_from_json(self, filename):
+    def load_cows_from_json(self, filename: str) -> None:
         with open(filename, 'r') as file:
             data = json.load(file)
             for cow_data in data:
@@ -57,16 +60,21 @@ class Herd:
     def _execute_gpu(self, method_name, *args, **kwargs):
         raise NotImplementedError("GPU execution is not implemented yet.")
     
-    def save(self, filename):
+    def save(self, filename: str) -> None:
+        """Save Herd to a pickle file"""
         with open(filename, 'wb') as file:
             pickle.dump(self, file)
 
     @staticmethod
-    def load(filename):
+    def load(filename: str) -> None:
+        """Load Herd from pickle"""
         with open(filename, 'rb') as file:
             return pickle.load(file)
         
-    def register_model(self, model_function):
+    def register_model(self, model_function: Callable) -> None:
+        """
+        Add a function to ModelRegistry
+        """
         if not self.cows_in_herd:
             raise ValueError("No cows in the herd to determine the input structure.")
         input_structure = self.cows_in_herd[0].input
@@ -119,19 +127,23 @@ class Herd:
         raise NotImplementedError("GPU execution is not implemented yet.")
 
     def list_cows(self):
+        """Display all cows in the herd"""
         print('Index'.ljust(5), '| Cow ID')
         for index, cow in enumerate(self.cows_in_herd):
             print(f'{index}'.ljust(5), f'| {cow.cow_id}')
 
-    def list_results(self, cow_index):
+    def list_results(self, cow_index: int) -> None:
+        """Display results for a Cow"""
         cow = self.cows_in_herd[cow_index]
         cow._list_results()
 
-    def get_result(self, cow_index, result_id):
+    def get_result(self, cow_index: int, result_id: str) -> dict:
+        """Return results for a Cow"""
         cow = self.cows_in_herd[cow_index]
         result = cow._get_result(result_id)
         return result
 
     def check_input(self):
+        """Display cow.input structure"""
         cow = self.cows_in_herd[0]
         cow._print_input_structure()
