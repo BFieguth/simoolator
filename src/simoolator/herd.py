@@ -147,3 +147,22 @@ class Herd:
         """Display cow.input structure"""
         cow = self.cows_in_herd[0]
         cow._print_input_structure()
+
+    def check_data_consistency(self):
+        """
+        Check that all cows in herd 
+        Return True if all cows in herd have a consistent input structure. 
+        """
+        if not self.cows_in_herd:
+            return True
+        
+        inconsistent_cows = []
+        first_instance = self.cows_in_herd[0].get_input_structure()
+        for cow in self.cows_in_herd[1:]:
+            if cow.get_input_structure() != first_instance:
+                inconsistent_cows.append(cow.cow_id)
+    
+        if inconsistent_cows:
+            print(f"The following cow IDs have issues with their input data: {inconsistent_cows}")
+            return False
+        return True

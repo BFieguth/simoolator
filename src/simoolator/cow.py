@@ -106,6 +106,20 @@ class Cow:
                 
         print_structure(self.input)
 
+    def get_input_structure(self):
+        """
+        Returns the structure of self.input with key names and data types.
+        Used to check all Cow instances have the same input structure.
+        """
+        def _get_structure(data: Any):
+            if isinstance(data, dict):
+                return {key: _get_structure(value) for key, value in data.items()}
+            elif isinstance(data, list):
+                return [_get_structure(item) for item in data]
+            else:
+                return type(data).__name__ 
+        return _get_structure(self.input)
+
     # Testing Methods #
     def moo(self):
         moo_sound = 'M' + 'o' * random.randint(2, 10)
