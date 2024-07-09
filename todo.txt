@@ -13,9 +13,6 @@ Features to Add
     * Add native support for multithreading on CPU
     * Determine if GPU support is possible
 
-- Input mapping visualization
-    * Pass the name of a model, print the data structure to highlight which variables are being used.
-
 - Modify input mapping
     * Add methods for altering the input mapping of a function. Make names don't have to match to work
 
@@ -33,9 +30,6 @@ Features to Add
     * Keep a log of each model execution, include error messages
     * Values related to performance / execution time
 
-- Create Herd from files
-    * CSV, JSON
-
 - Create Herd Session log
     * Create new log every time Herd is loaded from file
     * Store details of every method called on the Herd
@@ -48,3 +42,7 @@ Features to Add
 - Methods to view and manage cows in a herd
 
 - Methods to view and manage ModelRegistry
+
+- Run herd.check_data_consistency before running models
+
+- Update Cow input visualization to use print_nested_dict_tree()

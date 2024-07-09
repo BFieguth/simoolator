@@ -6,6 +6,7 @@ import dill as pickle
 
 from simoolator.cow import Cow
 from .model_registry import ModelRegistry
+import simoolator.utils as utils
 
 class Herd:
     def __init__(self, name: str) -> None:
@@ -166,3 +167,13 @@ class Herd:
             print(f"The following cow IDs have issues with their input data: {inconsistent_cows}")
             return False
         return True
+
+    def get_input_mapping(self, model_name: str):
+        if self.check_data_consistency():
+            _ , input_mapping = self.model_registry.get_model(model_name)
+            input_data = self.cows_in_herd[0].input
+            utils.print_nested_dict_tree(
+                input_data, input_mapping=(model_name, input_mapping)
+                )
+        else:
+            raise ValueError("Structure of input data is incosistent across herd")
