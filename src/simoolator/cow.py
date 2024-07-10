@@ -1,4 +1,5 @@
 import datetime
+import inspect
 import random
 import time
 from typing import Any, Callable, Dict, Union
@@ -48,16 +49,32 @@ class Cow:
                 Mapping of self to model_function arguments
         """
         start_time = datetime.datetime.now()
-        result_id = f'{model_function.__name__}_{start_time.date()}'
+        formatted_start_time = start_time.isoformat()
+        result_id = f"{model_function.__name__}_{start_time.strftime('%Y%m%d_%H%M%S')}"
         inputs = {key: self._get_nested_value(value) for key, value in input_mapping.items()}
+
+        # Extract default args used for metadata
+        sig = inspect.signature(model_function)
+        defaults = {key: val.default for key, val in sig.parameters.items() 
+                    if val.default is not inspect.Parameter.empty}
+        used_defaults = {key: val for key, val in defaults.items() 
+                         if key not in input_mapping}
+
         result = model_function(**inputs)
         end_time = datetime.datetime.now()
+        formatted_end_time = end_time.isoformat()
         self.results[result_id] = result
 
         metadata_entry = {
-            'model_name': model_function.__name__,
-            'start_time': start_time,
-            'end_time': end_time
+            "model_name": model_function.__name__,
+            "start_time": formatted_start_time,
+            "end_time": formatted_end_time,
+            "run_time": end_time - start_time,
+            "input_args": inputs,
+            "default_args": used_defaults,
+            # "status": , # TODO once error handling is setup add a status variable
+                          # Did model run or crash
+            # "error_message": , # If model crashed store the error message 
         }
         self.metadata[result_id] = metadata_entry
 

@@ -114,7 +114,7 @@ class Herd:
             'execution_time_seconds': execution_time,
             'errors': exceptions
         }
-        self.metadata[f'{model_function.__name__}_{start_time.date()}'] = metadata_entry
+        self.metadata[f"{model_function.__name__}_{start_time.strftime('%Y%m%d_%H%M%S')}"] = metadata_entry
         
         if exceptions:
             print('\nThe following Cows failed to run the model: ')
