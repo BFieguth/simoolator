@@ -136,18 +136,18 @@ class Herd:
     def list_results(self, cow_index: int) -> None:
         """Display results for a Cow"""
         cow = self.cows_in_herd[cow_index]
-        cow._list_results()
+        cow.list_results()
 
     def get_result(self, cow_index: int, result_id: str) -> dict:
         """Return results for a Cow"""
         cow = self.cows_in_herd[cow_index]
-        result = cow._get_result(result_id)
+        result = cow.get_result(result_id)
         return result
 
     def check_input(self):
         """Display cow.input structure"""
         cow = self.cows_in_herd[0]
-        cow._print_input_structure()
+        cow.print_input_structure()
 
     def check_data_consistency(self):
         """
