@@ -56,10 +56,24 @@ class Cow:
             input_mapping::dict
                 Mapping of self to model_function arguments
         """
+        
+        def get_nested_value(path: str) -> Any:
+            """
+            Return value nested in self.input.
+
+            Args:
+                path: Dot-separated path to the nested value.
+            """
+            keys = path.split(".")
+            value = self.input
+            for key in keys:
+                value = value[key]
+            return value
+        
         start_time = datetime.datetime.now()
         formatted_start_time = start_time.isoformat()
         result_id = f"{model_function.__name__}_{start_time.strftime('%Y%m%d_%H%M%S')}"
-        inputs = {key: self._get_nested_value(value) for key, value in input_mapping.items()}
+        inputs = {key: get_nested_value(value) for key, value in input_mapping.items()}
 
         # Extract default args used for metadata
         sig = inspect.signature(model_function)
@@ -85,19 +99,6 @@ class Cow:
             # "error_message": , # If model crashed store the error message 
         }
         self.metadata[result_id] = metadata_entry
-
-    def _get_nested_value(self, path: str) -> Any:
-        """
-        Return value nested in self.input.
-
-        Args:
-            path: Dot-separated path to the nested value.
-        """
-        keys = path.split(".")
-        value = self.input
-        for key in keys:
-            value = value[key]
-        return value
     
     def list_results(self) -> None:
         """

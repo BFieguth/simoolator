@@ -72,10 +72,6 @@ class TestCow:
             "weight": self.cow.input["weight"]
             }
         assert metadata["default_args"] == {}
-        
-    def test_get_nested_value(self):
-        value = self.cow._get_nested_value("milk.morning")
-        assert value == 10
 
     def test_list_results(self, capsys):
         self.cow.results = {"result1": 100, "result2": 200}
