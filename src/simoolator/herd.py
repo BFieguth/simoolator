@@ -260,4 +260,49 @@ class Herd:
                 )
         else:
             raise ValueError("Structure of input data is inconsistent across herd")
+    
+    def list_models(self, verbose=True) -> None:
+        """
+        List all models registered to Herd
+
+        Args:
+            verbose: If True print full input mapping. If False print a table
+                     with model names and arguments.
+        """
+        models = [key for key in self.model_registry.models.keys()]
         
+        if verbose:
+            for model in models:
+                print("\n" + "-"*25 + "\n")
+                self.get_input_mapping(model)
+        
+        if not verbose:
+            print("Model".ljust(10), "| Arguments")
+            for model in models:
+                args = [arg for arg in self.model_registry.models[model]["input_mapping"].keys()]
+                print(f"{model}".ljust(10), f"| {args}")
+
+    def remove_model(self, model_name: str) -> None:
+        """
+        Remove a model from ModelRegistry
+
+        Args:
+            model_name: Name of model to remove
+        """
+        if model_name in self.model_registry.models.keys():
+            self.model_registry.models.pop(model_name)
+            print(f"{model_name} has been removed.")
+        else:
+            print(f"ERROR: {model_name} is not registered.")
+
+    def get_model(self, model_name: str) -> Callable:
+        """
+        Return a function from ModelRegistry
+
+        Args:
+            model_name: Name of function to return
+        """
+
+        if model_name in self.model_registry.models.keys():
+            return self.model_registry.models[model_name]["function"]
+        print(f"{model_name} is not registered")

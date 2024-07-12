@@ -14,8 +14,10 @@ class TestHerd:
     @pytest.fixture(autouse=True)
     def setup(self):
         self.herd = Herd(name="TestHerd")
-        self.cow1 = Cow(cow_id=1, input_data={"milk": {"morning": 10, "evening": 8}})
-        self.cow2 = Cow(cow_id=2, input_data={"milk": {"morning": 12, "evening": 9}})
+        self.cow1 = Cow(cow_id=1, input_data={"milk": {"morning": 10, "evening": 8},
+                                              "weight": 500})
+        self.cow2 = Cow(cow_id=2, input_data={"milk": {"morning": 12, "evening": 9},
+                                              "weight": 740})
         self.herd.add_cow(self.cow1)
         self.herd.add_cow(self.cow2)
 
@@ -128,3 +130,62 @@ class TestHerd:
             self.herd.model_registry.get_model = unittest.mock.MagicMock(return_value=(None, {"milk": {"morning": "int"}}))
             self.herd.get_input_mapping('dummy_model')
             mock_print_nested_dict_tree.assert_called_once()
+
+    def test_list_models_verbose(self, capsys):
+        def model_function(milk, weight):
+            return milk + weight
+
+        self.herd.register_model(model_function)
+
+        self.herd.list_models(verbose=True)
+        captured = capsys.readouterr()
+
+        assert "-------------------------" in captured.out
+        assert model_function.__name__ in captured.out
+        assert "milk" in captured.out
+        assert "weight" in captured.out
+
+    def test_list_models_non_verbose(self, capsys):
+        def model_function(milk, weight):
+            return milk + weight
+        
+        self.herd.register_model(model_function)
+
+        self.herd.list_models(verbose=False)
+        captured = capsys.readouterr()
+
+        assert "Model" in captured.out
+        assert model_function.__name__ in captured.out
+        assert "milk" in captured.out
+        assert "weight" in captured.out
+
+    def test_remove_model(self, capsys):
+        model_function = lambda milk: milk
+        self.herd.register_model(model_function)
+        assert model_function.__name__ in self.herd.model_registry.models
+
+        self.herd.remove_model(model_function.__name__)
+        captured = capsys.readouterr()
+
+        assert model_function.__name__ not in self.herd.model_registry.models
+        assert f"{model_function.__name__} has been removed." in captured.out
+
+    def test_remove_model_not_registered(self, capsys):
+        self.herd.remove_model("non_existent_model")
+        captured = capsys.readouterr()
+
+        assert "ERROR: non_existent_model is not registered." in captured.out
+
+    def test_get_model(self):
+        model_function = lambda milk: milk
+        self.herd.register_model(model_function)
+
+        retrieved_function = self.herd.get_model(model_function.__name__)
+        assert retrieved_function == model_function
+
+    def test_get_model_not_registered(self, capsys):
+        retrieved_function = self.herd.get_model("non_existent_model")
+        captured = capsys.readouterr()
+
+        assert retrieved_function is None
+        assert "non_existent_model is not registered" in captured.out

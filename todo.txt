@@ -1,5 +1,3 @@
-2. Add testing for each class
-3. Create timeline for adding listed features
 4. Create use case examples:
     - Running NASEM for a herd (via nasem_dairy)
     - Running integrated model on many different animals (via modelling_tools)
@@ -41,8 +39,6 @@ Features to Add
 - Add option to select which Cows to execute model on
 
 - Methods to view and manage cows in a herd
-
-- Methods to view and manage ModelRegistry
 
 - Run herd.check_data_consistency before running models
 
